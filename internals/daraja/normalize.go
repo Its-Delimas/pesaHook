@@ -2,6 +2,7 @@ package daraja
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/Its-Delimas/pesaHook/internals/event"
 )
@@ -43,4 +44,19 @@ func normalizeSTKPush(raw STKCallbackPayload) event.NormalizedEvent {
 		ev.Status = "failed"
 	}
 	return ev
+}
+
+func normalizeC2B(raw C2BPayload) event.NormalizedEvent {
+	amount, _ := strconv.ParseFloat(raw.TransAmount,64)
+
+	return event.NormalizedEvent{
+		EventType: "c2b_confirmation",
+		Provider: "daraja",
+		Shortcode: raw.BusinessShortCode,
+		TransactionID: raw.TransID,
+		Amount: amount,
+		PhoneNumber: raw.MSISDN,
+		Status: "success",
+		ProviderMeta: map[string]string{},
+	}
 }
