@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/Its-Delimas/pesaHook/internals/event"
+	"github.com/Its-Delimas/pesaHook/internal/event"
 )
 
-func normalizeSTKPush(raw STKCallbackPayload) event.NormalizedEvent {
+func NormalizeSTKPush(raw STKCallbackPayload, rawBytes []byte) event.NormalizedEvent {
 	cb := raw.Body.StkCallback
 
 	ev := event.NormalizedEvent{
@@ -43,20 +43,23 @@ func normalizeSTKPush(raw STKCallbackPayload) event.NormalizedEvent {
 	} else {
 		ev.Status = "failed"
 	}
+	ev.Raw = rawBytes
 	return ev
 }
 
-func normalizeC2B(raw C2BPayload) event.NormalizedEvent {
-	amount, _ := strconv.ParseFloat(raw.TransAmount,64)
+func NormalizeC2B(raw C2BPayload, rawBytes []byte) event.NormalizedEvent {
+	amount, _ := strconv.ParseFloat(raw.TransAmount, 64)
 
-	return event.NormalizedEvent{
-		EventType: "c2b_confirmation",
-		Provider: "daraja",
-		Shortcode: raw.BusinessShortCode,
+	ev := event.NormalizedEvent{
+		EventType:     "c2b_confirmation",
+		Provider:      "daraja",
+		Shortcode:     raw.BusinessShortCode,
 		TransactionID: raw.TransID,
-		Amount: amount,
-		PhoneNumber: raw.MSISDN,
-		Status: "success",
-		ProviderMeta: map[string]string{},
+		Amount:        amount,
+		PhoneNumber:   raw.MSISDN,
+		Status:        "success",
+		ProviderMeta:  map[string]string{},
 	}
+	ev.Raw = rawBytes
+	return ev
 }
