@@ -13,8 +13,11 @@ func main() {
 	eventStore := store.NewMemoryEVentStore()
 
 	ingestHandler := httpapi.NewIngestHandler(endpointStore, eventStore)
+	endpointHandler := httpapi.NewEndpointHandler(endpointStore)
 
 	mux := http.NewServeMux()
+
+	mux.HandleFunc("POST /endpoints", endpointHandler.Create)
 
 	mux.HandleFunc("POST /ingest/{provider}/{id}", func(w http.ResponseWriter, r *http.Request) {
 		endpointID := r.PathValue("id")
