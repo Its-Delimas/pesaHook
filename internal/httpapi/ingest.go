@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/Its-Delimas/pesaHook/internal/daraja"
+	"github.com/Its-Delimas/pesaHook/internal/delivery"
 	"github.com/Its-Delimas/pesaHook/internal/event"
 	"github.com/Its-Delimas/pesaHook/internal/store"
 )
@@ -15,10 +16,11 @@ import (
 type IngestHandler struct {
 	Endpoints store.EndpointStore
 	Events    store.EventStore
+	Delivery  *delivery.Delivery
 }
 
-func NewIngestHandler(endpoints store.EndpointStore, events store.EventStore) *IngestHandler {
-	return &IngestHandler{Endpoints: endpoints, Events: events}
+func NewIngestHandler(endpoints store.EndpointStore, events store.EventStore, d *delivery.Delivery) *IngestHandler {
+	return &IngestHandler{Endpoints: endpoints, Events: events, Delivery: d}
 }
 
 // ServeHTTP handles POST /ingest/{provider}/{endpointID}
@@ -54,7 +56,11 @@ func (h *IngestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request, endpoi
 		return
 	}
 
-	// todo: hand off to delivery worker to forward to ep.DestinationURL
+	go func() {
+		if err := h.Delivery.Deliver(ep, ev); err != nil {
+			// Todo: log failure, write to dead letter
+		}
+	}()
 
 	w.WriteHeader(http.StatusOK)
 }

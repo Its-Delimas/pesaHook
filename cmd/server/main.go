@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/Its-Delimas/pesaHook/internal/delivery"
 	"github.com/Its-Delimas/pesaHook/internal/httpapi"
 	"github.com/Its-Delimas/pesaHook/internal/store"
 )
@@ -12,7 +13,8 @@ func main() {
 	endpointStore := store.NewMemoryEndpointStore()
 	eventStore := store.NewMemoryEVentStore()
 
-	ingestHandler := httpapi.NewIngestHandler(endpointStore, eventStore)
+	d := delivery.NewDelivery()
+	ingestHandler := httpapi.NewIngestHandler(endpointStore, eventStore, d)
 	endpointHandler := httpapi.NewEndpointHandler(endpointStore)
 
 	mux := http.NewServeMux()
