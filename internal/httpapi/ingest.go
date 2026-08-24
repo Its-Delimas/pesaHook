@@ -14,13 +14,14 @@ import (
 )
 
 type IngestHandler struct {
-	Endpoints store.EndpointStore
-	Events    store.EventStore
-	Delivery  *delivery.Delivery
+	Endpoints  store.EndpointStore
+	Events     store.EventStore
+	Delivery   *delivery.Delivery
+	DeadLetter store.DeadLetterStore
 }
 
-func NewIngestHandler(endpoints store.EndpointStore, events store.EventStore, d *delivery.Delivery) *IngestHandler {
-	return &IngestHandler{Endpoints: endpoints, Events: events, Delivery: d}
+func NewIngestHandler(endpoints store.EndpointStore, events store.EventStore, d *delivery.Delivery, dl store.DeadLetterStore) *IngestHandler {
+	return &IngestHandler{Endpoints: endpoints, Events: events, Delivery: d, DeadLetter: dl}
 }
 
 // ServeHTTP handles POST /ingest/{provider}/{endpointID}
@@ -57,8 +58,15 @@ func (h *IngestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request, endpoi
 	}
 
 	go func() {
-		if err := h.Delivery.Deliver(ep, ev); err != nil {
-			// Todo: log failure, write to dead letter
+		attempts, err := h.Delivery.Deliver(ep, ev)
+		if err != nil {
+			h.DeadLetter.Save(store.DeadLetter{
+				Event:      ev,
+				EndpointID: ep.ID,
+				LastError:  err.Error(),
+				FailedAt:   time.Now(),
+				Attempts:   attempts,
+			})
 		}
 	}()
 
