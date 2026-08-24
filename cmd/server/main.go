@@ -18,6 +18,8 @@ func main() {
 	ingestHandler := httpapi.NewIngestHandler(endpointStore, eventStore, d, deadLetterStore)
 	endpointHandler := httpapi.NewEndpointHandler(endpointStore)
 
+	eventHandler := httpapi.NewEventHandler(eventStore)
+
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("POST /endpoints", endpointHandler.Create)
@@ -26,6 +28,9 @@ func main() {
 		endpointID := r.PathValue("id")
 		ingestHandler.ServeHTTP(w, r, endpointID)
 	})
+
+	mux.HandleFunc("GET /events", eventHandler.List)
+	mux.HandleFunc("GET /events/{id}", eventHandler.Get)
 
 	log.Println("PesaHook listening on :8080")
 	if err := http.ListenAndServe(":8080", mux); err != nil {
