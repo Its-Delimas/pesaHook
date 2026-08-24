@@ -26,42 +26,41 @@ func NewDelivery() *Delivery {
 //deliver sends one event to the endpoint's destination, signed with its secret.
 // retries with exponential backoff; returns error only if all attempts fail.
 
-func (d *Delivery) Deliver(ep endpoint.Endpoint, ev event.NormalizedEvent) error {
+func (d *Delivery) Deliver(ep endpoint.Endpoint, ev event.NormalizedEvent) (attempts int, err error) {
 	payload, err := json.Marshal(ev)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	signature := sign(payload, ep.Secret)
-
 	backoffs := []time.Duration{0, 2 * time.Second, 5 * time.Second, 15 * time.Second}
 
 	var lastErr error
-	for _, wait := range backoffs {
+	for i, wait := range backoffs {
 		time.Sleep(wait)
+		attempts = i + 1
 
-		req, err := http.NewRequest("POST", ep.DestinationURL, bytes.NewReader(payload))
-		if err != nil {
-			lastErr = err
+		req, reqErr := http.NewRequest("POST", ep.DestinationURL, bytes.NewReader(payload))
+		if reqErr != nil {
+			lastErr = reqErr
 			continue
 		}
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("X-PesaHook-Signature", signature)
 
-		resp, err := d.Client.Do(req)
-		if err != nil {
-			lastErr = err
+		resp, doErr := d.Client.Do(req)
+		if doErr != nil {
+			lastErr = doErr
 			continue
 		}
 		resp.Body.Close()
 
 		if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-			return nil
+			return attempts, nil
 		}
 		lastErr = errStatus(resp.StatusCode)
 	}
-	//todo: on final failure, write to dead-letter store instead of just returning error
-	return lastErr
+	return attempts, lastErr
 }
 
 func sign(payload []byte, secret string) string {
