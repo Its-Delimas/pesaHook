@@ -1,3 +1,4 @@
+// file: internal/event/event.go
 package event
 
 import (
@@ -7,6 +8,7 @@ import (
 
 type NormalizedEvent struct {
 	EventID          string
+	EndpointID       string
 	EventType        string
 	Provider         string
 	Shortcode        string
@@ -17,7 +19,7 @@ type NormalizedEvent struct {
 	Status           string
 	ResultCode       int
 	StatusReason     string
-	OccuredAt        time.Time
+	OccurredAt       time.Time
 	ReceivedAt       time.Time
 	ProviderMeta     map[string]string
 	Raw              json.RawMessage

@@ -37,7 +37,7 @@ func (s *MemoryEventStore) ListByEndpoint(endpointID string) ([]event.Normalized
 	defer s.mu.RUnlock()
 	var results []event.NormalizedEvent
 	for _, e := range s.data {
-		if e.ProviderMeta["endpoint_id"] == endpointID {
+		if e.EndpointID == endpointID {
 			results = append(results, e)
 		}
 	}
