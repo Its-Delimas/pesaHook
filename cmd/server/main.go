@@ -14,7 +14,8 @@ func main() {
 	eventStore := store.NewMemoryEVentStore()
 
 	d := delivery.NewDelivery()
-	ingestHandler := httpapi.NewIngestHandler(endpointStore, eventStore, d)
+	deadLetterStore := store.NewMemoryDeadLetterStore()
+	ingestHandler := httpapi.NewIngestHandler(endpointStore, eventStore, d, deadLetterStore)
 	endpointHandler := httpapi.NewEndpointHandler(endpointStore)
 
 	mux := http.NewServeMux()
