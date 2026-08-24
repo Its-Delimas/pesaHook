@@ -1,6 +1,7 @@
 package daraja
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -62,4 +63,27 @@ func NormalizeC2B(raw C2BPayload, rawBytes []byte) event.NormalizedEvent {
 	}
 	ev.Raw = rawBytes
 	return ev
+}
+
+func NormalizeAny(rawBytes []byte) event.NormalizedEvent {
+	var probe struct {
+		Body struct {
+			StkCallback json.RawMessage `json:"stkCallback"`
+		} `json:"Body"`
+		TransID string `json:"TransID"`
+	}
+	json.Unmarshal(rawBytes, &probe)
+
+	if probe.Body.StkCallback != nil {
+		var raw STKCallbackPayload
+		json.Unmarshal(rawBytes, &raw)
+		return NormalizeSTKPush(raw, rawBytes)
+	}
+
+	if probe.TransID != "" {
+		var raw C2BPayload
+		json.Unmarshal(rawBytes, &raw)
+		return NormalizeC2B(raw, rawBytes)
+	}
+	return event.NormalizedEvent{Status: "unrecognized", Raw: rawBytes}
 }
