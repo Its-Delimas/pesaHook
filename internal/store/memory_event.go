@@ -11,7 +11,7 @@ type MemoryEventStore struct {
 	data map[string]event.NormalizedEvent
 }
 
-func NewMemoryEVentStore() *MemoryEventStore {
+func NewMemoryEventStore() *MemoryEventStore {
 	return &MemoryEventStore{data: make(map[string]event.NormalizedEvent)}
 }
 

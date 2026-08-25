@@ -11,7 +11,7 @@ import (
 
 func main() {
 	endpointStore := store.NewMemoryEndpointStore()
-	eventStore := store.NewMemoryEVentStore()
+	eventStore := store.NewMemoryEventStore()
 
 	d := delivery.NewDelivery()
 	deadLetterStore := store.NewMemoryDeadLetterStore()

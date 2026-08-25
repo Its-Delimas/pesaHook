@@ -1,3 +1,4 @@
+// file: internal/httpapi/ingest_test.go
 package httpapi
 
 import (
@@ -23,16 +24,16 @@ func TestIngestHandler_STKPush_DeliversToDestination(t *testing.T) {
 	defer mockDestination.Close()
 
 	endpointStore := store.NewMemoryEndpointStore()
-	eventStore := store.NewMemoryEVentStore()
-	deadLetterScore := store.NewMemoryDeadLetterStore()
+	eventStore := store.NewMemoryEventStore()
+	deadLetterStore := store.NewMemoryDeadLetterStore()
 	d := delivery.NewDelivery()
 
-	ep := endpoint.Endpoint("daraja", "600000", []string{"stk_push"}, mockDestination.URL)
+	ep := endpoint.NewEndpoint("daraja", "600000", []string{"stk_push"}, mockDestination.URL)
 	endpointStore.Save(ep)
 
-	handler := NewIngestHandler(endpointStore, eventStore, d, deadLetterScore)
+	handler := NewIngestHandler(endpointStore, eventStore, d, deadLetterStore)
 
-	payload := []byte(`{"Body":{"stkCallback":{"ResultCode":0,"ResultDesc":"ok","CallbackMetadata":{"Item":[{"Name":"Amount","Value":1.0},{"Name":"MpesaReceiptNumber","Value":"NLJ7RT61SV"},{"Name":"PhoneNumber","Value":254118333997}]}}}}`)
+	payload := []byte(`{"Body":{"stkCallback":{"ResultCode":0,"ResultDesc":"ok","CallbackMetadata":{"Item":[{"Name":"Amount","Value":1.0},{"Name":"MpesaReceiptNumber","Value":"NLJ7RT61SV"},{"Name":"PhoneNumber","Value":254708374149}]}}}}`)
 
 	req := httptest.NewRequest("POST", "/ingest/daraja/"+ep.ID, bytes.NewReader(payload))
 	w := httptest.NewRecorder()
@@ -45,9 +46,9 @@ func TestIngestHandler_STKPush_DeliversToDestination(t *testing.T) {
 
 	select {
 	case <-received:
-		//delivery happened - test passed
+		// delivery happened, test passes
 	case <-time.After(2 * time.Second):
-		t.Fatalf("expected event to be delivered to destination, timed out waiting")
+		t.Fatal("expected event to be delivered to destination, timed out waiting")
 	}
 
 	events, err := eventStore.ListByEndpoint(ep.ID)
@@ -55,10 +56,27 @@ func TestIngestHandler_STKPush_DeliversToDestination(t *testing.T) {
 		t.Fatalf("failed to list events: %v", err)
 	}
 	if len(events) != 1 {
-		t.Fatalf("expected 1 saved events, got %d", len(events))
+		t.Fatalf("expected 1 saved event, got %d", len(events))
 	}
 	if events[0].TransactionID != "NLJ7RT61SV" {
 		t.Errorf("expected transaction ID NLJ7RT61SV, got %s", events[0].TransactionID)
 	}
+}
 
+func TestIngestHandler_UnknownEndpoint(t *testing.T) {
+	endpointStore := store.NewMemoryEndpointStore()
+	eventStore := store.NewMemoryEventStore()
+	deadLetterStore := store.NewMemoryDeadLetterStore()
+	d := delivery.NewDelivery()
+
+	handler := NewIngestHandler(endpointStore, eventStore, d, deadLetterStore)
+
+	req := httptest.NewRequest("POST", "/ingest/daraja/nonexistent", bytes.NewReader([]byte(`{}`)))
+	w := httptest.NewRecorder()
+
+	handler.ServeHTTP(w, req, "nonexistent")
+
+	if w.Code != http.StatusNotFound {
+		t.Fatalf("expected 404, got %d", w.Code)
+	}
 }
