@@ -26,3 +26,20 @@ type C2BPayload struct {
 	MSISDN            string `json:"MSISDN"`
 	TransTime         string `json:"TransTime"`
 }
+
+type B2CPayload struct {
+	Result struct {
+		ResultType               int    `json:"ResultType"`
+		ResultCode               int    `json:"ResultCode"`
+		ResultDesc               string `json:"ResultDesc"`
+		OriginatorConversationID string `json:"OriginatorConversationID"`
+		ConversationID           string `json:"ConversationID"`
+		TransactionID            string `json:"TransactionID"`
+		ResultParameters         *struct {
+			ResultParameter []struct {
+				Key   string      `json:"Key"`
+				Value interface{} `json:"Value"`
+			} `json:"ResultParameter"`
+		} `json:"ResultParameters"`
+	} `json:"Result"`
+}
