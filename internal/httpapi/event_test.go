@@ -53,3 +53,20 @@ func TestEventHandler_Replay_Success(t *testing.T) {
 		t.Fatalf("expected replay to hit destination, timed out")
 	}
 }
+func TestEventHandler_Replay_EventNotFound(t *testing.T) {
+	endpointStore := store.NewMemoryEndpointStore()
+	eventStore := store.NewMemoryEventStore()
+	d := delivery.NewDelivery()
+
+	handler := NewEventHandler(eventStore, endpointStore, d)
+
+	req := httptest.NewRequest("POST", "/events/nonexistent/replay", nil)
+	req.SetPathValue("id", "nonexistent")
+	w := httptest.NewRecorder()
+
+	handler.Replay(w, req)
+
+	if w.Code != http.StatusNotFound {
+		t.Fatalf("expected 404, got %d", w.Code)
+	}
+}
