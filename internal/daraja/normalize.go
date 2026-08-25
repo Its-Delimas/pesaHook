@@ -52,29 +52,39 @@ func NormalizeC2B(raw C2BPayload, rawBytes []byte) event.NormalizedEvent {
 	amount, _ := strconv.ParseFloat(raw.TransAmount, 64)
 
 	ev := event.NormalizedEvent{
-		EventType:     "c2b_confirmation",
-		Provider:      "daraja",
-		Shortcode:     raw.BusinessShortCode,
-		TransactionID: raw.TransID,
-		Amount:        amount,
-		PhoneNumber:   raw.MSISDN,
-		Status:        "success",
-		ProviderMeta:  map[string]string{},
+		EventType:        "c2b_confirmation",
+		Provider:         "daraja",
+		Shortcode:        raw.BusinessShortCode,
+		TransactionID:    raw.TransID,
+		Amount:           amount,
+		PhoneNumber:      raw.MSISDN,
+		AccountReference: raw.BillRefNumber, // fixed mapping on test billrefNumber to Account reference
+
+		Status:       "success",
+		ProviderMeta: map[string]string{},
 	}
+
 	ev.Raw = rawBytes
 	return ev
 }
 
 func NormalizeAny(rawBytes []byte) event.NormalizedEvent {
+
 	var probe struct {
 		Body struct {
 			StkCallback json.RawMessage `json:"stkCallback"`
 		} `json:"Body"`
-		Result  json.RawMessage `json:"Result"`
-		TransID string          `json:"TransID"`
+		Result  json.RawMessage `json:"Result"`  //b2c
+		TransID string          `json:"TransID"` //c2b
 	}
 
-	json.Unmarshal(rawBytes, &probe)
+	//enebla consumer to know if its invalid json or unknown daraja event
+	if err := json.Unmarshal(rawBytes, &probe); err != nil {
+		return event.NormalizedEvent{
+			Status: "invalid",
+			Raw:    rawBytes,
+		}
+	}
 
 	if probe.Body.StkCallback != nil {
 		var raw STKCallbackPayload
@@ -93,7 +103,9 @@ func NormalizeAny(rawBytes []byte) event.NormalizedEvent {
 		json.Unmarshal(rawBytes, &raw)
 		return NormalizeC2B(raw, rawBytes)
 	}
-	return event.NormalizedEvent{Status: "unrecognized", Raw: rawBytes}
+
+	return event.NormalizedEvent{
+		Status: "unrecognized", Raw: rawBytes}
 }
 
 func NormalizeB2C(raw B2CPayload, rawBytes []byte) event.NormalizedEvent {
