@@ -32,7 +32,7 @@ type createEndpointResponse struct {
 func (h *EndpointHandler) Create(w http.ResponseWriter, r *http.Request) {
 	var req createEndpointRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "invalide request body", http.StatusBadRequest)
+		http.Error(w, "invalid request body", http.StatusBadRequest)
 		return
 	}
 
@@ -54,7 +54,7 @@ func (h *EndpointHandler) Create(w http.ResponseWriter, r *http.Request) {
 		Secret:    ep.Secret,
 	}
 
-	w.Header().Set("Content-Type","application/json")
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(resp)
 }
