@@ -14,12 +14,14 @@ import (
 )
 
 type Delivery struct {
-	Client *http.Client
+	Client   *http.Client
+	Backoffs []time.Duration
 }
 
 func NewDelivery() *Delivery {
 	return &Delivery{
-		Client: &http.Client{Timeout: 10 * time.Second},
+		Client:   &http.Client{Timeout: 10 * time.Second},
+		Backoffs: []time.Duration{0, 2 * time.Second, 5 * time.Second, 15 * time.Second},
 	}
 }
 
@@ -33,10 +35,9 @@ func (d *Delivery) Deliver(ep endpoint.Endpoint, ev event.NormalizedEvent) (atte
 	}
 
 	signature := sign(payload, ep.Secret)
-	backoffs := []time.Duration{0, 2 * time.Second, 5 * time.Second, 15 * time.Second}
 
 	var lastErr error
-	for i, wait := range backoffs {
+	for i, wait := range d.Backoffs {
 		time.Sleep(wait)
 		attempts = i + 1
 

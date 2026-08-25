@@ -91,6 +91,7 @@ func TestIngestHandler_FailedDelivery_GoesToDeadLetter(t *testing.T) {
 	eventStore := store.NewMemoryEventStore()
 	deadLetterStore := store.NewMemoryDeadLetterStore()
 	d := delivery.NewDelivery()
+	d.Backoffs = []time.Duration{0, 0, 0, 0}
 
 	ep := endpoint.NewEndpoint("daraja", "600000", []string{"stk_push"}, failingDestination.URL)
 	endpointStore.Save(ep)
@@ -104,7 +105,7 @@ func TestIngestHandler_FailedDelivery_GoesToDeadLetter(t *testing.T) {
 	handler.ServeHTTP(w, req, ep.ID)
 
 	// backoff schedule is 0,2,5 and 15s...wait past all 4 attempts bedore proceeding
-	time.Sleep(23 * time.Second)
+	time.Sleep(100 * time.Millisecond)
 
 	deadLetters, err := deadLetterStore.ListByEndpoint(ep.ID)
 	if err != nil {
