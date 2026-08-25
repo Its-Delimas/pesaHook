@@ -8,21 +8,14 @@ func TestNormalizesSTKPush_Success(t *testing.T) {
 	raw.Body.StkCallback.CheckoutRequestID = "ws_CO_191220191020363925"
 	raw.Body.StkCallback.ResultCode = 0
 	raw.Body.StkCallback.ResultDesc = "the service request is processed successfully"
-	raw.Body.StkCallback.CallbackMetadata = &struct {
-		Item []struct {
-			Name  string      `json:"Name"`
-			Value interface{} `json:"Value"`
-		} `json:"Item"`
-	}{
-		Item: []struct {
-			Name  string      `json:"Name"`
-			Value interface{} `json:"Value"`
-		}{
+	raw.Body.StkCallback.CallbackMetadata = &CallbackMetadata{
+		Item: []CallbackItem{
 			{Name: "Amount", Value: 1.00},
 			{Name: "MpesaReceiptNumber", Value: "NLJ7RT61SV"},
 			{Name: "PhoneNumber", Value: 254118333997.0},
 		},
 	}
+	
 	ev := NormalizeSTKPush(raw, []byte(`{}`))
 
 	if ev.Status != "success" {
