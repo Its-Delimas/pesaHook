@@ -2,6 +2,10 @@
 
 Thanks for considering contributing — PesaHook is early-stage infra, and feedback/PRs from real Daraja integrators are especially valuable.
 
+```
+Note: pesaHook is and will always remain to be open source
+```
+
 ## Getting started
 
 1. Fork and clone the repo
