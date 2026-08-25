@@ -70,8 +70,10 @@ func NormalizeAny(rawBytes []byte) event.NormalizedEvent {
 		Body struct {
 			StkCallback json.RawMessage `json:"stkCallback"`
 		} `json:"Body"`
-		TransID string `json:"TransID"`
+		Result  json.RawMessage `json:"Result"`
+		TransID string          `json:"TransID"`
 	}
+
 	json.Unmarshal(rawBytes, &probe)
 
 	if probe.Body.StkCallback != nil {
@@ -80,10 +82,52 @@ func NormalizeAny(rawBytes []byte) event.NormalizedEvent {
 		return NormalizeSTKPush(raw, rawBytes)
 	}
 
+	if probe.Result != nil {
+		var raw B2CPayload
+		json.Unmarshal(rawBytes, &raw)
+		return NormalizeB2C(raw, rawBytes)
+	}
+
 	if probe.TransID != "" {
 		var raw C2BPayload
 		json.Unmarshal(rawBytes, &raw)
 		return NormalizeC2B(raw, rawBytes)
 	}
 	return event.NormalizedEvent{Status: "unrecognized", Raw: rawBytes}
+}
+
+func NormalizeB2C(raw B2CPayload, rawBytes []byte) event.NormalizedEvent {
+	res := raw.Result
+
+	ev := event.NormalizedEvent{
+		EventType:     "b2c_result",
+		Provider:      "daraja",
+		TransactionID: res.TransactionID,
+		ResultCode:    res.ResultCode,
+		StatusReason:  res.ResultDesc,
+		ProviderMeta: map[string]string{
+			"originator_conversation_id": res.OriginatorConversationID,
+			"conversation_id":            res.ConversationID,
+		},
+		Raw: rawBytes,
+	}
+	if res.ResultCode == 0 && res.ResultParameters != nil {
+		ev.Status = "success"
+
+		fields := make(map[string]interface{})
+		for _, p := range res.ResultParameters.ResultParameter {
+			fields[p.Key] = p.Value
+		}
+
+		if amount, ok := fields["TransactionAmount"].(float64); ok {
+			ev.Amount = amount
+		}
+
+		if receipt, ok := fields["TransactionReceipt"].(string); ok {
+			ev.TransactionID = receipt
+		}
+	} else {
+		ev.Status = "failed"
+	}
+	return ev
 }
