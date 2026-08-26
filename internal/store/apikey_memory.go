@@ -31,3 +31,5 @@ func (s *MemoryAPIKeyStore) GetByHash(hash string) (apikey.APIKey, error) {
 	}
 	return k, nil
 }
+
+//todo: cureently in store - will switch to real db later

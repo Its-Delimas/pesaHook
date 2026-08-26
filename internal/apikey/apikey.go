@@ -14,20 +14,20 @@ type APIKey struct {
 	CreatedAt time.Time
 }
 
+func HashKey(raw string) string {
+	sum := sha256.Sum256([]byte(raw))
+	return hex.EncodeToString(sum[:])
+}
+
 // generate raw key - show once to te user and store
 func NewAPIKey(accountID string) (rawKey string, ak APIKey) {
 	raw := generateRawKey()
 	return raw, APIKey{
 		ID:        generateID(),
 		AccountID: accountID,
-		KeyHash:   hashKey(raw),
+		KeyHash:   HashKey(raw),
 		CreatedAt: time.Now(),
 	}
-}
-
-func hashKey(raw string) string {
-	sum := sha256.Sum256([]byte(raw))
-	return hex.EncodeToString(sum[:])
 }
 
 func generateRawKey() string {

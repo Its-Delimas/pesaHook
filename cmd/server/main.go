@@ -30,7 +30,8 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("POST /endpoints", endpointHandler.Create)
+	apiKeyStore := store.NewMemoryAPIKeyStore()
+	mux.Handle("POST /endpoints", httpapi.RequireAPIKey(apiKeyStore)(http.HandlerFunc(endpointHandler.Create)))
 
 	mux.HandleFunc("POST /ingest/{provider}/{id}", func(w http.ResponseWriter, r *http.Request) {
 		endpointID := r.PathValue("id")
