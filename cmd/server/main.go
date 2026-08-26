@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 
@@ -10,8 +11,15 @@ import (
 )
 
 func main() {
-	endpointStore := store.NewMemoryEndpointStore()
-	eventStore := store.NewMemoryEventStore()
+	ctx := context.Background()
+	pool, err := store.NewPostgresPool(ctx, "postgres://pesahook:devpass@localhost:5432/pesahook")
+	if err != nil {
+		log.Fatalf("failed to connect to postgres: %v", err)
+	}
+	defer pool.Close()
+
+	endpointStore := store.NewPostgresEndpointStore(pool)
+	eventStore := store.NewPostgresEventStore(pool)
 
 	d := delivery.NewDelivery()
 	deadLetterStore := store.NewMemoryDeadLetterStore()
