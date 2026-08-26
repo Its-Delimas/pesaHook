@@ -46,7 +46,7 @@ func (s *PostgresEndpointStore) GetByID(id string) (endpoint.Endpoint, error) {
 		SELECT id, provider, shortcode, event_types, destination_url, secret, ingest_path, created_at
 		FROM endpoints WHERE id = $1`, id)
 
-	err := row.Scan(&e.ID, &e.Provider, &e.Shortcode, &e.EventTypes, &e.DestinationURL, &e.IngestPath, &e.CreatedAt)
+	err := row.Scan(&e.ID, &e.Provider, &e.Shortcode, &e.EventTypes, &e.DestinationURL, &e.Secret, &e.IngestPath, &e.CreatedAt)
 	if err != nil {
 		if err.Error() == "no rows in result set" {
 			return endpoint.Endpoint{}, ErrNotFound

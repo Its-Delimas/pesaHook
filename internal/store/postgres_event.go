@@ -26,10 +26,10 @@ func (s *PostgresEventStore) Save(e event.NormalizedEvent) error {
 		INSERT INTO events (
 			event_id, endpoint_id, event_type, provider, shortcode,
 			transaction_id, amount, phone_number, account_reference,
-			status, result_code, status_reason, occured_at, received_at,
+			status, result_code, status_reason, occurred_at, received_at,
 			provider_meta, raw
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
-	`, e.EventID, e.EndpointID, e, e.EventType, e.Provider, e.Shortcode, e.TransactionID,
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
+	`, e.EventID, e.EndpointID, e.EventType, e.Provider, e.Shortcode, e.TransactionID,
 		e.Amount, e.PhoneNumber, e.AccountReference, e.Status, e.ResultCode, e.StatusReason, e.OccurredAt,
 		e.ReceivedAt, providerMeta, []byte(e.Raw),
 	)
@@ -44,7 +44,7 @@ func (s *PostgresEventStore) GetByID(id string) (event.NormalizedEvent, error) {
 	row := s.pool.QueryRow(context.Background(), `
 		SELECT event_id, endpoint_id, event_type, provider, shortcode,
 		transaction_id, amount, phone_number, account_reference,
-		status, result_code, status_reason, occured_at, received_at,
+		status, result_code, status_reason, occurred_at, received_at,
 		provider_meta, raw
 		FROM events WHERE event_id = $1	`, id)
 
@@ -72,7 +72,7 @@ func (s *PostgresEventStore) ListByEndpoint(endpointID string) ([]event.Normaliz
 	rows, err := s.pool.Query(context.Background(), `
 		SELECT event_id, endpoint_id, event_type, provider, shortcode,
 		transaction_id, amount, phone_number, account_reference,
-		status, result_code, status_reason, occured_at, received_at,
+		status, result_code, status_reason, occurred_at, received_at,
 		provider_meta, raw
 		FROM events WHERE endpoint_id = $1
 		ORDER BY received_at DESC

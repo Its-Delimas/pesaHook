@@ -18,11 +18,11 @@ CREATE TABLE events(
     transaction_id TEXT,
     amount DOUBLE PRECISION,
     phone_number TEXT,
-    account_references TEXT,
+    account_reference TEXT,
     status TEXT NOT NULL,
     result_code INT,
     status_reason TEXT,
-    occured_at TIMESTAMPTZ,
+    occurred_at TIMESTAMPTZ,
     received_at TIMESTAMPTZ NOT NULL,
     provider_meta JSONB,
     raw JSONB
