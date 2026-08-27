@@ -40,3 +40,30 @@ func TestAccountRateLimiter_AllowsWithinCapacityThenBlocks(t *testing.T) {
 		t.Errorf("expected handler to be called exactly 3 times, got %d", calls)
 	}
 }
+
+func TestAccountRateLimiter_SeparateAccountsHaveSeparateLimits(t *testing.T) {
+	limiterMW := NewAccountRateLimiter(1, 0)
+
+	handler := limiterMW(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	ctxA := context.WithValue(context.Background(), accountIDKey, "account-A")
+	ctxB := context.WithValue(context.Background(), accountIDKey, "account-B")
+
+	// accountA uses its one allowed request
+	reqA := httptest.NewRequest("POST", "/endpoints", nil).WithContext(ctxA)
+	wA := httptest.NewRecorder()
+	handler.ServeHTTP(wA, reqA)
+	if wA.Code != http.StatusOK {
+		t.Fatalf("expected account A`s first request to suceed, got %d", wA.Code)
+	}
+
+	// account B unaffected by As outage
+	reqB := httptest.NewRequest("POST", "/endpoints", nil).WithContext(ctxB)
+	wB := httptest.NewRecorder()
+	handler.ServeHTTP(wB, reqB)
+	if wB.Code != http.StatusOK {
+		t.Fatalf("expected account B's first request to succeed independently ")
+	}
+}
