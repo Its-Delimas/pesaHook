@@ -2,15 +2,13 @@ package delivery
 
 import (
 	"bytes"
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
 	"net/http"
 	"time"
 
 	"github.com/Its-Delimas/pesaHook/internal/endpoint"
 	"github.com/Its-Delimas/pesaHook/internal/event"
+	"github.com/Its-Delimas/pesaHook/pkg/verify"
 )
 
 type Delivery struct {
@@ -34,7 +32,7 @@ func (d *Delivery) Deliver(ep endpoint.Endpoint, ev event.NormalizedEvent) (atte
 		return 0, err
 	}
 
-	signature := sign(payload, ep.Secret)
+	signature := verify.Signature(payload, ep.Secret)
 
 	var lastErr error
 	for i, wait := range d.Backoffs {
@@ -62,12 +60,6 @@ func (d *Delivery) Deliver(ep endpoint.Endpoint, ev event.NormalizedEvent) (atte
 		lastErr = errStatus(resp.StatusCode)
 	}
 	return attempts, lastErr
-}
-
-func sign(payload []byte, secret string) string {
-	mac := hmac.New(sha256.New, []byte(secret))
-	mac.Write(payload)
-	return hex.EncodeToString(mac.Sum(nil))
 }
 
 func errStatus(code int) error {
