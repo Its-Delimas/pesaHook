@@ -1,3 +1,5 @@
+github.com/Its-Delimas/rate_limiter v0.1.0 h1:Jha3W/ydCLy2FdLyxMywep+DJpRk3HLHeVKMwULkx+Q=
+github.com/Its-Delimas/rate_limiter v0.1.0/go.mod h1:cwc1ehmCoFKVJGwD27CUaHIX+vy3aVbiqOA/DRDuFf0=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/jackc/pgpassfile v1.0.0 h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsIM=
 github.com/jackc/pgpassfile v1.0.0/go.mod h1:CEx0iS5ambNFdcRtxPj5JhEz+xB6uRky5eyVu/W2HEg=
