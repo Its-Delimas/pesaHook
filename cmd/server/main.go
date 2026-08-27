@@ -35,7 +35,8 @@ func main() {
 	accountHandler := httpapi.NewAccountHandler(accountStore, apiKeyStore)
 
 	mux.HandleFunc("POST /accounts", accountHandler.Create)
-	mux.Handle("POST /endpoints", httpapi.RequireAPIKey(apiKeyStore)(http.HandlerFunc(endpointHandler.Create)))
+	rateLimiter := httpapi.NewAccountRateLimiter(20, 1)
+	mux.Handle("POST /endpoints", httpapi.RequireAPIKey(apiKeyStore)(rateLimiter(http.HandlerFunc(endpointHandler.Create))))
 
 	mux.HandleFunc("POST /ingest/{provider}/{id}", func(w http.ResponseWriter, r *http.Request) {
 		endpointID := r.PathValue("id")
