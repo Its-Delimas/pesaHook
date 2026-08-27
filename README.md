@@ -10,7 +10,7 @@ Daraja's callback payloads are inconsistent, undocumented in practice, and painf
 - **Guaranteed delivery** — automatic retries with backoff if your server is down or slow
 - **Dead-letter logging** — failed deliveries (after all retries) are recorded, not lost
 - **Manual replay** — resend any captured event to your server on demand
-- **HMAC-signed deliveries** — verify that incoming webhooks really came from PesaHook
+- **HMAC-signed deliveries** — verify that incoming webhooks really came from PesaHook (see [Verifying webhook signatures](#verifying-webhook-signatures))
 - **Language-agnostic** — plain REST/JSON API; use it from Node, Python, PHP, or any language that can make an HTTP request
 - **Per-endpoint routing** — one registered endpoint per shortcode, so multiple Paybills/Tills stay cleanly separated
 
@@ -38,6 +38,25 @@ curl -X POST https://your-pesahook-instance/endpoints \
 2. Point your Daraja callback URL (in the Daraja portal or your STK Push request) at the returned `ingest_url`.
 
 3. Your server receives normalized, signed events at `destination_url` — no more parsing Daraja's raw payload shapes yourself.
+
+## Verifying webhook signatures
+
+Every event PesaHook delivers to your `destination_url` includes an `X-PesaHook-Signature` header — an HMAC-SHA256 signature computed using the `secret` you received when registering your endpoint. Verify it before trusting the payload, to confirm the request genuinely came from PesaHook and wasn't spoofed.
+
+**Go:**
+```go
+import "github.com/Its-Delimas/pesaHook/pkg/verify"
+
+signature := r.Header.Get("X-PesaHook-Signature")
+body, _ := io.ReadAll(r.Body)
+
+if !verify.Verify(body, yourEndpointSecret, signature) {
+    http.Error(w, "invalid signature", http.StatusUnauthorized)
+    return
+}
+```
+
+**Any other language:** compute an HMAC-SHA256 of the raw request body using your endpoint's `secret` as the key, hex-encode the result, and compare it (using a constant-time comparison, not `==`) against the `X-PesaHook-Signature` header.
 
 ## Status
 
