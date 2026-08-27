@@ -52,3 +52,8 @@ func main() {
 		log.Fatal(err)
 	}
 }
+
+// helper
+func Protect(apiKeys store.APIKeyStore, rateLimiter func(http.Handler) http.Handler, h http.HandlerFunc) http.Handler {
+	return httpapi.RequireAPIKey(apiKeys)(rateLimiter(h))
+}
