@@ -4,6 +4,7 @@ import "time"
 
 type Endpoint struct {
 	ID             string
+	AccountID      string
 	Provider       string //daraja, but maybe airtel or later
 	Shortcode      string
 	EventTypes     []string //stkpush,c2bconfirmation

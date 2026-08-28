@@ -20,9 +20,25 @@ func NewEventHandler(events store.EventStore, endpoints store.EndpointStore, d *
 
 // GET /events?endpoint_id={id}
 func (h *EventHandler) List(w http.ResponseWriter, r *http.Request) {
+	accountID, ok := r.Context().Value(accountIDKey).(string)
+	if !ok {
+		http.Error(w, "unauthorised", http.StatusUnauthorized)
+		return
+	}
+
 	endpointID := r.URL.Query().Get("endpoint_id")
 	if endpointID == "" {
 		http.Error(w, "endpoint_id query param is required", http.StatusBadRequest)
+		return
+	}
+
+	ep, err := h.Endpoints.GetByID(endpointID)
+	if err != nil {
+		http.Error(w, "endpoint not found", http.StatusNotFound)
+		return
+	}
+	if ep.AccountID != accountID {
+		http.Error(w, "endpoint not found", http.StatusNotFound) //404, not 403 so not to expose others endpoints
 		return
 	}
 

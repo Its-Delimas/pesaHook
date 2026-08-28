@@ -6,10 +6,11 @@ import (
 	"time"
 )
 
-func NewEndpoint(provider, shortcode string, eventTypes []string, destinationURL string) Endpoint {
+func NewEndpoint(accountID, provider, shortcode string, eventTypes []string, destinationURL string) Endpoint {
 	id := generateID()
 	return Endpoint{
 		ID:             id,
+		AccountID:      accountID,
 		Provider:       provider,
 		Shortcode:      shortcode,
 		EventTypes:     eventTypes,

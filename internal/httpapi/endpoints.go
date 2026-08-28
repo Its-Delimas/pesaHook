@@ -30,6 +30,12 @@ type createEndpointResponse struct {
 }
 
 func (h *EndpointHandler) Create(w http.ResponseWriter, r *http.Request) {
+	accountID, ok := r.Context().Value(accountIDKey).(string)
+	if !ok {
+		http.Error(w, "unauthenticated", http.StatusUnauthorized)
+		return
+	}
+
 	var req createEndpointRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "invalid request body", http.StatusBadRequest)
@@ -41,7 +47,7 @@ func (h *EndpointHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ep := endpoint.NewEndpoint(req.Provider, req.Shortcode, req.EventTypes, req.DestinationURL)
+	ep := endpoint.NewEndpoint(accountID, req.Provider, req.Shortcode, req.EventTypes, req.DestinationURL)
 
 	if err := h.Endpoints.Save(ep); err != nil {
 		http.Error(w, "failed to save endpoint", http.StatusInternalServerError)
