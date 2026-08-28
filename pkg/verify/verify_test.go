@@ -35,3 +35,15 @@ func TestVerify_ValidSignature(t *testing.T) {
 		t.Error("expected valid signature to verify successfully")
 	}
 }
+
+func TestVerify_TamperedPayloadFails(t *testing.T) {
+	payload := []byte(`{"event":"stk_push"}`)
+	secret := "testsecret"
+
+	sig := Signature(payload, secret)
+	tamperedPayload := []byte(`{"event":"stk_push","amount":999999}`)
+
+	if Verify(tamperedPayload,secret,sig){
+		t.Error("expected verification to fail when payload is tampered with after signing")
+	}
+}
