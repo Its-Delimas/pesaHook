@@ -57,3 +57,12 @@ func TestVerify_WrongSecretFails(t *testing.T) {
 		t.Error("expected verification to fail with wrong secret")
 	}
 }
+
+func TestVerify_GarbageSignatureFails(t *testing.T) {
+	payload := []byte(`{"event":"stk_push"}`)
+	secret := "testsecret"
+
+	if Verify(payload, secret, "not-a-real-signature") {
+		t.Error("expected verification to fail on garbage sinature inpus")
+	}
+}
