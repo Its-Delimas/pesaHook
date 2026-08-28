@@ -25,3 +25,13 @@ func TestSignature_DifferebtSecretsProduceDifferentSignatures(t *testing.T) {
 	}
 }
 
+func TestVerify_ValidSignature(t *testing.T) {
+	payload := []byte(`{"event":"stk_push"}`)
+	secret := "testsecret"
+
+	sig := Signature(payload, secret)
+
+	if !Verify(payload, secret, sig) {
+		t.Error("expected valid signature to verify successfully")
+	}
+}
