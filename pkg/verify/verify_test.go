@@ -43,7 +43,17 @@ func TestVerify_TamperedPayloadFails(t *testing.T) {
 	sig := Signature(payload, secret)
 	tamperedPayload := []byte(`{"event":"stk_push","amount":999999}`)
 
-	if Verify(tamperedPayload,secret,sig){
+	if Verify(tamperedPayload, secret, sig) {
 		t.Error("expected verification to fail when payload is tampered with after signing")
+	}
+}
+
+func TestVerify_WrongSecretFails(t *testing.T) {
+	payload := []byte(`{"event":"stk_push"}`)
+
+	sig := Signature(payload, "correctsecret")
+
+	if Verify(payload, "wrongsecret", sig) {
+		t.Error("expected verification to fail with wrong secret")
 	}
 }
