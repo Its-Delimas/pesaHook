@@ -37,7 +37,7 @@ func (h *EventHandler) List(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "endpoint not found", http.StatusNotFound)
 		return
 	}
-	
+
 	if ep.AccountID != accountID {
 		http.Error(w, "endpoint not found", http.StatusNotFound) //404, not 403 so not to expose others endpoints
 		return
@@ -54,24 +54,12 @@ func (h *EventHandler) List(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *EventHandler) Get(w http.ResponseWriter, r *http.Request) {
-	id := r.PathValue("id")
-
-	ev, err := h.Events.GetByID(id)
-	if err != nil {
-		if err == store.ErrNotFound {
-			http.Error(w, "event not found", http.StatusNotFound)
-			return
-		}
-		http.Error(w, "failed to get event", http.StatusInternalServerError)
+	accountID, ok := r.Context().Value(accountIDKey).(string)
+	if !ok {
+		http.Error(w, "unauthenticated", http.StatusUnauthorized)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(ev)
-}
-
-// POST /events/{id}/replay
-func (h *EventHandler) Replay(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 
 	ev, err := h.Events.GetByID(id)
@@ -85,8 +73,38 @@ func (h *EventHandler) Replay(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ep, err := h.Endpoints.GetByID(ev.EndpointID)
+	if err != nil || ep.AccountID != accountID {
+		http.Error(w, "event not found", http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(ev)
+}
+
+// POST /events/{id}/replay
+func (h *EventHandler) Replay(w http.ResponseWriter, r *http.Request) {
+	accountID, ok := r.Context().Value(accountIDKey).(string)
+	if !ok {
+		http.Error(w, "unauthenticated", http.StatusUnauthorized)
+		return
+	}
+
+	id := r.PathValue("id")
+
+	ev, err := h.Events.GetByID(id)
 	if err != nil {
-		http.Error(w, "endpoint for this event no longer exists", http.StatusNotFound)
+		if err == store.ErrNotFound {
+			http.Error(w, "event not found", http.StatusNotFound)
+			return
+		}
+		http.Error(w, "failed to get event", http.StatusInternalServerError)
+		return
+	}
+
+	ep, err := h.Endpoints.GetByID(ev.EndpointID)
+	if err != nil || ep.AccountID != accountID {
+		http.Error(w, "event not found", http.StatusNotFound)
 		return
 	}
 
