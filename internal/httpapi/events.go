@@ -22,7 +22,7 @@ func NewEventHandler(events store.EventStore, endpoints store.EndpointStore, d *
 func (h *EventHandler) List(w http.ResponseWriter, r *http.Request) {
 	accountID, ok := r.Context().Value(accountIDKey).(string)
 	if !ok {
-		http.Error(w, "unauthorised", http.StatusUnauthorized)
+		http.Error(w, "unauthenticated", http.StatusUnauthorized)
 		return
 	}
 
@@ -37,6 +37,7 @@ func (h *EventHandler) List(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "endpoint not found", http.StatusNotFound)
 		return
 	}
+	
 	if ep.AccountID != accountID {
 		http.Error(w, "endpoint not found", http.StatusNotFound) //404, not 403 so not to expose others endpoints
 		return
