@@ -29,12 +29,12 @@ func NewPostgresEndpointStore(pool *pgxpool.Pool) *PostgresEndpointStore {
 
 func (s *PostgresEndpointStore) Save(e endpoint.Endpoint) error {
 	_, err := s.pool.Exec(context.Background(), `
-		INSERT INTO endpoints (id, provider, shortcode, event_types,destination_url,secret,ingest_path, created_at)
-		VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+		INSERT INTO endpoints (id, account_id,provider, shortcode, event_types,destination_url,secret,ingest_path, created_at)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
 		ON CONFLICT (id) DO UPDATE SET 
 			destination_url = EXCLUDED.destination_url,
 			event_types = EXCLUDED.event_types`,
-		e.ID, e.Provider, e.Shortcode, e.EventTypes, e.DestinationURL, e.Secret, e.IngestPath, e.CreatedAt,
+		e.ID, e.AccountID, e.Provider, e.Shortcode, e.EventTypes, e.DestinationURL, e.Secret, e.IngestPath, e.CreatedAt,
 	)
 	return err
 }
@@ -43,10 +43,10 @@ func (s *PostgresEndpointStore) GetByID(id string) (endpoint.Endpoint, error) {
 	var e endpoint.Endpoint
 
 	row := s.pool.QueryRow(context.Background(), `
-		SELECT id, provider, shortcode, event_types, destination_url, secret, ingest_path, created_at
+		SELECT id,account_id, provider, shortcode, event_types, destination_url, secret, ingest_path, created_at
 		FROM endpoints WHERE id = $1`, id)
 
-	err := row.Scan(&e.ID, &e.Provider, &e.Shortcode, &e.EventTypes, &e.DestinationURL, &e.Secret, &e.IngestPath, &e.CreatedAt)
+	err := row.Scan(&e.ID, &e.AccountID, &e.Provider, &e.Shortcode, &e.EventTypes, &e.DestinationURL, &e.Secret, &e.IngestPath, &e.CreatedAt)
 	if err != nil {
 		if err.Error() == "no rows in result set" {
 			return endpoint.Endpoint{}, ErrNotFound
