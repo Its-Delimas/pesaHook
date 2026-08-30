@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Its-Delimas/pesaHook/internal/daraja"
-	"github.com/Its-Delimas/pesaHook/internal/delivery"
-	"github.com/Its-Delimas/pesaHook/internal/event"
-	"github.com/Its-Delimas/pesaHook/internal/store"
+	"github.com/Its-Delimas/pesahook/internal/daraja"
+	"github.com/Its-Delimas/pesahook/internal/delivery"
+	"github.com/Its-Delimas/pesahook/internal/event"
+	"github.com/Its-Delimas/pesahook/internal/store"
 )
 
 type IngestHandler struct {

@@ -7,10 +7,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Its-Delimas/pesaHook/internal/delivery"
-	"github.com/Its-Delimas/pesaHook/internal/endpoint"
-	"github.com/Its-Delimas/pesaHook/internal/event"
-	"github.com/Its-Delimas/pesaHook/internal/store"
+	"github.com/Its-Delimas/pesahook/internal/delivery"
+	"github.com/Its-Delimas/pesahook/internal/endpoint"
+	"github.com/Its-Delimas/pesahook/internal/event"
+	"github.com/Its-Delimas/pesahook/internal/store"
 )
 
 func TestEventHandler_Replay_Success(t *testing.T) {

@@ -3,7 +3,7 @@ package store
 import (
 	"sync"
 
-	"github.com/Its-Delimas/pesaHook/internal/endpoint"
+	"github.com/Its-Delimas/pesahook/internal/endpoint"
 )
 
 type MemoryEndpointStore struct {

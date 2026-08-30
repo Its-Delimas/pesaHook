@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/Its-Delimas/pesaHook/internal/apikey"
-	"github.com/Its-Delimas/pesaHook/internal/store"
+	"github.com/Its-Delimas/pesahook/internal/apikey"
+	"github.com/Its-Delimas/pesahook/internal/store"
 )
 
 type contextkey string

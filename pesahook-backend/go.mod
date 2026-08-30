@@ -1,4 +1,4 @@
-module github.com/Its-Delimas/pesaHook
+module github.com/Its-Delimas/pesahook
 
 go 1.25.0
 

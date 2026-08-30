@@ -3,7 +3,7 @@ package store
 import (
 	"sync"
 
-	"github.com/Its-Delimas/pesaHook/internal/apikey"
+	"github.com/Its-Delimas/pesahook/internal/apikey"
 )
 
 type MemoryAPIKeyStore struct {

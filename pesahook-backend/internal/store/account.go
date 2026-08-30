@@ -3,7 +3,7 @@ package store
 import (
 	"sync"
 
-	"github.com/Its-Delimas/pesaHook/internal/account"
+	"github.com/Its-Delimas/pesahook/internal/account"
 )
 
 type AccountStore interface {

@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/Its-Delimas/pesaHook/internal/account"
-	"github.com/Its-Delimas/pesaHook/internal/apikey"
-	"github.com/Its-Delimas/pesaHook/internal/store"
+	"github.com/Its-Delimas/pesahook/internal/account"
+	"github.com/Its-Delimas/pesahook/internal/apikey"
+	"github.com/Its-Delimas/pesahook/internal/store"
 )
 
 type AccountHandler struct {

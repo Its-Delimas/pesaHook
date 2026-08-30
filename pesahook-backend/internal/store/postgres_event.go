@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/Its-Delimas/pesaHook/internal/event"
+	"github.com/Its-Delimas/pesahook/internal/event"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 

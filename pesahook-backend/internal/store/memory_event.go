@@ -3,7 +3,7 @@ package store
 import (
 	"sync"
 
-	"github.com/Its-Delimas/pesaHook/internal/event"
+	"github.com/Its-Delimas/pesahook/internal/event"
 )
 
 type MemoryEventStore struct {

@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Its-Delimas/pesaHook/internal/endpoint"
-	"github.com/Its-Delimas/pesaHook/internal/event"
+	"github.com/Its-Delimas/pesahook/internal/endpoint"
+	"github.com/Its-Delimas/pesahook/internal/event"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 

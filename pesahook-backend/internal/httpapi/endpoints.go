@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/Its-Delimas/pesaHook/internal/endpoint"
-	"github.com/Its-Delimas/pesaHook/internal/store"
+	"github.com/Its-Delimas/pesahook/internal/endpoint"
+	"github.com/Its-Delimas/pesahook/internal/store"
 )
 
 type EndpointHandler struct {

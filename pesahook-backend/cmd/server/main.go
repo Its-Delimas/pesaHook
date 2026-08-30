@@ -5,9 +5,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Its-Delimas/pesaHook/internal/delivery"
-	"github.com/Its-Delimas/pesaHook/internal/httpapi"
-	"github.com/Its-Delimas/pesaHook/internal/store"
+	"github.com/Its-Delimas/pesahook/internal/delivery"
+	"github.com/Its-Delimas/pesahook/internal/httpapi"
+	"github.com/Its-Delimas/pesahook/internal/store"
 )
 
 func main() {

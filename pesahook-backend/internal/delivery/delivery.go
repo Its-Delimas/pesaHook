@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Its-Delimas/pesaHook/internal/endpoint"
-	"github.com/Its-Delimas/pesaHook/internal/event"
-	"github.com/Its-Delimas/pesaHook/pkg/verify"
+	"github.com/Its-Delimas/pesahook/internal/endpoint"
+	"github.com/Its-Delimas/pesahook/internal/event"
+	"github.com/Its-Delimas/pesahook/pkg/verify"
 )
 
 type Delivery struct {

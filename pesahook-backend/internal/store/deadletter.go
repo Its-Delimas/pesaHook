@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Its-Delimas/pesaHook/internal/event"
+	"github.com/Its-Delimas/pesahook/internal/event"
 )
 
 type DeadLetter struct {

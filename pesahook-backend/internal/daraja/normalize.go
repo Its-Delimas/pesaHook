@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/Its-Delimas/pesaHook/internal/event"
+	"github.com/Its-Delimas/pesahook/internal/event"
 )
 
 func NormalizeSTKPush(raw STKCallbackPayload, rawBytes []byte) event.NormalizedEvent {

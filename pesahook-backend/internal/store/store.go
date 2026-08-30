@@ -3,8 +3,8 @@ package store
 import (
 	"errors"
 
-	"github.com/Its-Delimas/pesaHook/internal/endpoint"
-	"github.com/Its-Delimas/pesaHook/internal/event"
+	"github.com/Its-Delimas/pesahook/internal/endpoint"
+	"github.com/Its-Delimas/pesahook/internal/event"
 )
 
 var ErrNotFound = errors.New("not found")
