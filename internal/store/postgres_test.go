@@ -29,6 +29,7 @@ func TestPostgresEndpointStore_SaveAndGet(t *testing.T) {
 
 	ep := endpoint.Endpoint{
 		ID:             "test-endpoint-1",
+		AccountID:      "test-account-1",
 		Provider:       "daraja",
 		Shortcode:      "600000",
 		EventTypes:     []string{"stk_push", "c2b_confirmation"},
@@ -46,6 +47,10 @@ func TestPostgresEndpointStore_SaveAndGet(t *testing.T) {
 	fetched, err := store.GetByID(ep.ID)
 	if err != nil {
 		t.Fatalf("failed to fetch endpoint: %v", err)
+	}
+
+	if fetched.AccountID != ep.AccountID {
+		t.Errorf("expected account ID: %s, got %s", ep.AccountID, fetched.AccountID)
 	}
 
 	if fetched.DestinationURL != ep.DestinationURL {
@@ -75,7 +80,7 @@ func TestPostgresEventStore_SaveAndGet(t *testing.T) {
 	// events references endpoints via foreign key, so an endpoint must exist first
 	endpointStore := NewPostgresEndpointStore(pool)
 	ep := endpoint.Endpoint{
-		ID: "test-endpoint-2", Provider: "daraja", Shortcode: "600001",
+		ID: "test-endpoint-2", AccountID: "test-account-1", Provider: "daraja", Shortcode: "600001",
 		EventTypes: []string{"stk_push"}, DestinationURL: "https://example.com",
 		Secret: "secret", IngestPath: "/ingest/daraja/test-endpoint-2", CreatedAt: time.Now(),
 	}
@@ -108,7 +113,7 @@ func TestPostgresEventStore_SaveAndGet(t *testing.T) {
 	if fetched.Amount != 100.0 {
 		t.Errorf("expected amount 100.0, got %f", fetched.Amount)
 	}
-	
+
 	if fetched.ProviderMeta["checkout_request_id"] != "abc123" {
 		t.Errorf("expected provider_meta checkout_request_id abc123, got %s", fetched.ProviderMeta["checkout_request_id"])
 	}

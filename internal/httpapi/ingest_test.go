@@ -28,7 +28,7 @@ func TestIngestHandler_STKPush_DeliversToDestination(t *testing.T) {
 	deadLetterStore := store.NewMemoryDeadLetterStore()
 	d := delivery.NewDelivery()
 
-	ep := endpoint.NewEndpoint("daraja", "600000", []string{"stk_push"}, mockDestination.URL)
+	ep := endpoint.NewEndpoint("test-account-1", "daraja", "600000", []string{"stk_push"}, mockDestination.URL)
 	endpointStore.Save(ep)
 
 	handler := NewIngestHandler(endpointStore, eventStore, d, deadLetterStore)
@@ -93,7 +93,7 @@ func TestIngestHandler_FailedDelivery_GoesToDeadLetter(t *testing.T) {
 	d := delivery.NewDelivery()
 	d.Backoffs = []time.Duration{0, 0, 0, 0}
 
-	ep := endpoint.NewEndpoint("daraja", "600000", []string{"stk_push"}, failingDestination.URL)
+	ep := endpoint.NewEndpoint("test-account-1", "daraja", "600000", []string{"stk_push"}, failingDestination.URL)
 	endpointStore.Save(ep)
 
 	handler := NewIngestHandler(endpointStore, eventStore, d, deadLetterStore)

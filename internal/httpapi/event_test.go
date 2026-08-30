@@ -1,6 +1,7 @@
 package httpapi
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -24,7 +25,7 @@ func TestEventHandler_Replay_Success(t *testing.T) {
 	eventStore := store.NewMemoryEventStore()
 	d := delivery.NewDelivery()
 
-	ep := endpoint.NewEndpoint("daraja", "600000", []string{"stk_push"}, mockDestination.URL)
+	ep := endpoint.NewEndpoint("test-account-1", "daraja", "600000", []string{"stk_push"}, mockDestination.URL)
 	endpointStore.Save(ep)
 
 	ev := event.NormalizedEvent{
@@ -37,7 +38,8 @@ func TestEventHandler_Replay_Success(t *testing.T) {
 
 	handler := NewEventHandler(eventStore, endpointStore, d)
 
-	req := httptest.NewRequest("POST", "/events/evt123/replay", nil)
+	ctx := context.WithValue(context.Background(), accountIDKey, "test-account-1")
+	req := httptest.NewRequest("POST", "/events/evt123/replay", nil).WithContext(ctx)
 	req.SetPathValue("id", "evt123")
 	w := httptest.NewRecorder()
 
@@ -60,7 +62,8 @@ func TestEventHandler_Replay_EventNotFound(t *testing.T) {
 
 	handler := NewEventHandler(eventStore, endpointStore, d)
 
-	req := httptest.NewRequest("POST", "/events/nonexistent/replay", nil)
+	ctx := context.WithValue(context.Background(), accountIDKey, "test-account-1")
+	req := httptest.NewRequest("POST", "/events/nonexistent/replay", nil).WithContext(ctx)
 	req.SetPathValue("id", "nonexistent")
 	w := httptest.NewRecorder()
 

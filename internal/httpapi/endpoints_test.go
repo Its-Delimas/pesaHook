@@ -2,6 +2,7 @@ package httpapi
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -23,7 +24,8 @@ func TestEndpointHandler_Create(t *testing.T) {
 
 	body, _ := json.Marshal(reqBody)
 
-	req := httptest.NewRequest("POST", "/endpoints", bytes.NewReader(body))
+	ctx := context.WithValue(context.Background(), accountIDKey, "test-account-1")
+	req := httptest.NewRequest("POST", "/endpoints", bytes.NewReader(body)).WithContext(ctx)
 	w := httptest.NewRecorder()
 
 	handler.Create(w, req)
@@ -59,7 +61,8 @@ func TestEndpointHandler_Create_MissingFields(t *testing.T) {
 	reqBody := createEndpointRequest{Provider: "daraja"} //missing shortcode
 	body, _ := json.Marshal(reqBody)
 
-	req := httptest.NewRequest("POST", "/endpoints", bytes.NewReader(body))
+	ctx := context.WithValue(context.Background(), accountIDKey, "test-account-1")
+	req := httptest.NewRequest("POST", "/endpoints", bytes.NewReader(body)).WithContext(ctx)
 	w := httptest.NewRecorder()
 
 	handler.Create(w, req)
