@@ -108,3 +108,35 @@ export async function getDeadLettersForEndpoint(endpointID: string): Promise<Dea
 ];
 return mockDeadLetters.filter((dl)=>dl.endpoint_id === endpointID);
 }
+
+// TODO: replace with real call to GET /events/{id} once wired to the backend
+export async function getEventById (eventID:string): Promise<(NormalizedEvent & {raw: object}) | null> {
+  const mockDetail = {
+    event_id: "evt-1",
+    endpoint_id: "53146ddac1f3b124",
+    event_type: "stk_push",
+    status: "success" as const,
+    amount: 1500,
+    transaction_id: "NLJ7RT61SV",
+    phone_number:"254708374149",
+    received_at:"2026-08-29T10:15:00Z",
+      raw: {
+        Body: {
+          stkCallback: {
+            MerchantRequestID:"29115-34620561-1",
+            CheckoutRequestID:"ws_C0_191220191020363925",
+            ResultCode: 0,
+            ResultDesc:"The service request is processed successfully.",
+            CallbackMetadata: {
+              Item: [
+                {Name: "Amount",Value:1500},
+                {Name:"MpesaReceiptNumber", Value:"NLJ7RT61SV"},
+                {Name:"phoneNumber",Value:254708374149},
+              ],
+            },
+          },
+        },
+      },
+  };
+  return eventID == mockDetail.event_id ? mockDetail : null;
+}
