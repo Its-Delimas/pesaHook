@@ -1,32 +1,24 @@
-import {Archivo_Narrow,Inter,JetBrains_Mono} from "next/font/google"
-import "./globals.css"
+import {Geist,Geist_Mono} from "next/font/google";
+import './globals.css'
+import { Sidebar } from "@/components/sidebar";
 
-const archivoNarrow = Archivo_Narrow({
+const geist = Geist({
   subsets:["latin"],
-  variable:"--font-display",
-  weight:["500","700"]
+  variable:"--font-sans",
+});
+
+const geistMono = Geist_Mono ({
+  subsets:["latin"],
+  variable:"--font-mono",
 })
 
-const inter = Inter({
-  subsets:["latin"],
-  variable:"--font-body",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets:["latin"],
-  variable:"--font-body"
-});
-
-export default function RootLayout({
-  children,
-}:{
-  children:React.ReactNode;
-}){
+export default function RootLayout ({children}:{children:React.ReactNode;}){
   return (
     <html lang="en">
-      <body className={`${archivoNarrow.variable}${inter.variable}${jetbrainsMono.variable}`}>
-        {children}
+      <body className={`${geist.variable} ${geistMono.variable} font-sans antialiased`}>
+        <Sidebar />
+        <div className="flex-1 min-w-0">{children}</div>
       </body>
     </html>
-  );
+  )
 }
