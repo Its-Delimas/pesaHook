@@ -19,6 +19,13 @@ export type NormalizedEvent = {
   received_at:string;
 };
 
+export type DeadLetter = {
+  event: NormalizedEvent;
+  endpoint_id: string;
+  last_error: string;
+  failed_at: string;
+  attempts: number;
+}
 
 // TODO: replace mock data with real call to PesaHook once GET /endpoints exists on the backend
 export async function getEndpoints(): Promise<Endpoint[]> {
@@ -80,3 +87,24 @@ export async function getEventsForEndpoints( endpointId: string): Promise<Normal
   return mockEvents.filter((e)=>e.endpoint_id === endpointId);
 }
 
+// TODO: replace mock data with real GET dead-letters 
+export async function getDeadLettersForEndpoint(endpointID: string): Promise<DeadLetter[]> {
+  const mockDeadLetters: DeadLetter[] = [{
+    event:{
+      event_id:"evt-dl-1",
+      endpoint_id:"53146ddac1f3b124",
+      event_type:"stk_push",
+      status:"success",
+      amount:2500,
+      transaction_id:"PLK9RT88UX",
+      phone_number:"254701122334",
+      received_at:"2026-08-29T11:20:00Z",
+    },
+    endpoint_id:"53146ddac1f3b124",
+    last_error:"destination returned non-2xx status: Internal Server Error",
+    failed_at:"2026-08-29T11:21:15Z",
+    attempts:4,
+  },
+];
+return mockDeadLetters.filter((dl)=>dl.endpoint_id === endpointID);
+}
