@@ -40,6 +40,8 @@ func main() {
 	mux.Handle("GET /events/{id}", protect(apiKeyStore, rateLimiter, eventHandler.Get))
 	mux.Handle("POST /events/{id}/replay", protect(apiKeyStore, rateLimiter, eventHandler.Replay))
 
+	mux.Handle("GET /endpoints", protect(apiKeyStore, rateLimiter, endpointHandler.List))
+
 	// bootsrap route - must say open nio someone getas their first API key
 	mux.HandleFunc("POST /accounts", accountHandler.Create)
 

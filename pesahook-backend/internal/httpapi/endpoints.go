@@ -3,10 +3,21 @@ package httpapi
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/Its-Delimas/pesahook/internal/endpoint"
 	"github.com/Its-Delimas/pesahook/internal/store"
 )
+
+type endpointResponse struct {
+	ID             string   `json:"id"`
+	Provider       string   `json:"provider"`
+	Shortcode      string   `json:"shortcode"`
+	EventTypes     []string `json:"event_types"`
+	DestinationURL string   `json:"destination_url"`
+	IngestPath     string   `json:"ingest_url"`
+	CreatedAt      string   `json:"created_at"`
+}
 
 type EndpointHandler struct {
 	Endpoints store.EndpointStore
@@ -78,6 +89,15 @@ func (h *EndpointHandler) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	responses := make([]endpointResponse, len(endpoints))
+	for i, ep := range endpoints {
+		responses[i] = endpointResponse{
+			ID: ep.ID, Provider: ep.Provider, Shortcode: ep.Shortcode,
+			EventTypes: ep.EventTypes, DestinationURL: ep.DestinationURL,
+			IngestPath: ep.IngestPath, CreatedAt: ep.CreatedAt.Format(time.RFC3339),
+		}
+	}
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(endpoints)
+	json.NewEncoder(w).Encode(responses)
 }
