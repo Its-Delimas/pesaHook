@@ -55,3 +55,26 @@ func (s *PostgresEndpointStore) GetByID(id string) (endpoint.Endpoint, error) {
 	}
 	return e, nil
 }
+
+func (s *PostgresEndpointStore) ListByAccount(accountID string) ([]endpoint.Endpoint, error) {
+	rows, err := s.pool.Query(context.Background(), `
+		SELECT id, account_id, provider, shortcode, event_types, destination_url, secret, ingest_path, created_at
+		FROM endpoints WHERE account_id = $1
+		ORDER BY created_at DESC`, accountID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var results []endpoint.Endpoint
+	for rows.Next() {
+		var e endpoint.Endpoint
+		if err := rows.Scan(&e.ID, &e.AccountID, &e.Provider, &e.Shortcode, &e.EventTypes, &e.DestinationURL, &e.Secret, &e.IngestPath, &e.CreatedAt); err != nil {
+			return nil, err
+		}
+		results = append(results, e)
+	}
+	return results, rows.Err()
+}
