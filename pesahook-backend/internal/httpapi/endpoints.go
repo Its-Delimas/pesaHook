@@ -64,3 +64,20 @@ func (h *EndpointHandler) Create(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(resp)
 }
+
+func (h *EndpointHandler) List(w http.ResponseWriter, r *http.Request) {
+	accountID, ok := r.Context().Value(accountIDKey).(string)
+	if !ok {
+		http.Error(w, "unauthenticated", http.StatusUnauthorized)
+		return
+	}
+
+	endpoints, err := h.Endpoints.ListByAccount(accountID)
+	if err != nil {
+		http.Error(w, "failed to list endpoints", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(endpoints)
+}
