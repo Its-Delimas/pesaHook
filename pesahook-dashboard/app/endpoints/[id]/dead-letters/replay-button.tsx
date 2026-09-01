@@ -1,28 +1,42 @@
 "use client"
 
 import { useState } from "react"
+import { RotateCw,CheckCircle2,AlertCircle } from "lucide-react"
 import { replayEvent } from "@/lib/actions"
 
-export function ReplayButton({eventID}:{eventID:string}){
-    const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
+export function ReplayButton ({eventId}:{eventId:string}){
+    const [status,setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
 
     async function handleReplay(){
-        setStatus('loading')
-        const result = await replayEvent(eventID);
-        setStatus(result.success ? "done":"error")
+        setStatus("loading");
+        const result = await replayEvent(eventId);
+        setStatus(result.success ? "done" : "error");
     }
 
-    if (status === "done"){
-        return <span className="font-mono text-xs text-ledger">Delivered ✓</span>;
+    if (status==="done"){
+        return (
+            <span className="inline-flex items-center gap-1.5 text-sm text-accent font-medium">
+                <CheckCircle2 size={15} />
+                Delivered
+            </span>
+        );
     }
 
     return (
-        <button
-            onClick={handleReplay}
-            disabled={status==="loading"}
-            className="font-mono text-xs uppercase tracking-wide px-3 py-1.5 border border-ink/30 hover:bg-ink hover:text-paper transition-colors disabled:opacity-40"
-        >
-            {status === "loading" ? "Replaying..." : status === "error" ?"Failed - retry":"Replay"}
-        </button>
-    )
+        <button onClick={handleReplay} disabled={status==="loading"}
+            className={`inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg border transition-colors disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 ${
+                status === "error" 
+                    ? "border-danger/30 text-danger hover:bg-danger-soft focus-visible:outline-danger" 
+                    : "border-border text-ink hover:bg-surface focus-visible:outline-ink"
+            }`}>
+                {status === "loading" ? (
+                    <RotateCw size={14} className="animate-spin" />
+                ): status === "error" ? (
+                    <AlertCircle size={14} />
+                ):(
+                    <RotateCw size={14} />
+                )}
+                {status === "loading" ? "Replaying" : status === "error" ? "Retry" : "Replay"}
+            </button>
+    );
 }
