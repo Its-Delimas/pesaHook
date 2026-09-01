@@ -12,6 +12,7 @@ var ErrNotFound = errors.New("not found")
 type EndpointStore interface {
 	Save(e endpoint.Endpoint) error
 	GetByID(id string) (endpoint.Endpoint, error)
+	ListByAccount(accountID string) ([]endpoint.Endpoint, error)
 }
 
 type EventStore interface {
