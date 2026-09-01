@@ -47,7 +47,7 @@ export default async function EndpointsPage() {
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="w-8 h-8 rounded-lg bg-accent-soft flex items-center justify-center shrink-0">
-                    <Webhook size={15} className="text-accent" strokeWidth={2} />
+                    <Webhook size={15}  strokeWidth={2} />
                   </div>
                   <div className="flex flex-col gap-0.5 min-w-0">
                     <div className="flex items-center gap-2">
