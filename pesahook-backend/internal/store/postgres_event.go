@@ -83,7 +83,7 @@ func (s *PostgresEventStore) ListByEndpoint(endpointID string) ([]event.Normaliz
 	}
 	defer rows.Close()
 
-	var results []event.NormalizedEvent
+	results := []event.NormalizedEvent{}
 	for rows.Next() {
 		var e event.NormalizedEvent
 		var providerMeta []byte

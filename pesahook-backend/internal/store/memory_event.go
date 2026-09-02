@@ -35,7 +35,7 @@ func (s *MemoryEventStore) GetByID(id string) (event.NormalizedEvent, error) {
 func (s *MemoryEventStore) ListByEndpoint(endpointID string) ([]event.NormalizedEvent, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	var results []event.NormalizedEvent
+	results := []event.NormalizedEvent{}
 	for _, e := range s.data {
 		if e.EndpointID == endpointID {
 			results = append(results, e)
