@@ -8,11 +8,11 @@ import (
 )
 
 type DeadLetter struct {
-	Event      event.NormalizedEvent
-	EndpointID string
-	LastError  string
-	FailedAt   time.Time
-	Attempts   int
+	Event      event.NormalizedEvent `json:"event"`
+	EndpointID string                `json:"endpoint_id"`
+	LastError  string                `json:"last_error"`
+	FailedAt   time.Time             `json:"failed_at"`
+	Attempts   int                   `json:"attempts"`
 }
 
 type DeadLetterStore interface {
@@ -39,7 +39,7 @@ func (s *MemoryDeadLetterStore) Save(dl DeadLetter) error {
 func (s *MemoryDeadLetterStore) ListByEndpoint(endpointID string) ([]DeadLetter, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	var results []DeadLetter
+	results := []DeadLetter{}
 	for _, dl := range s.data {
 		if dl.EndpointID == endpointID {
 			results = append(results, dl)
