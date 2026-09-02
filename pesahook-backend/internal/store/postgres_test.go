@@ -1,6 +1,3 @@
-// file: internal/store/postgres_test.go
-//go:build integration
-
 package store
 
 import (
@@ -70,6 +67,40 @@ func TestPostgresEndpointStore_GetByID_NotFound(t *testing.T) {
 	_, err := store.GetByID("nonexistent-id")
 	if err != ErrNotFound {
 		t.Errorf("expected ErrNotFound, got %v", err)
+	}
+}
+
+// file: internal/store/postgres_test.go — add this test
+func TestPostgresEndpointStore_ListByAccount(t *testing.T) {
+	pool := testPool(t)
+	defer pool.Close()
+
+	store := NewPostgresEndpointStore(pool)
+
+	epA1 := endpoint.NewEndpoint("test-account-list-A", "daraja", "600010", []string{"stk_push"}, "https://a1.example.com")
+	epA2 := endpoint.NewEndpoint("test-account-list-A", "daraja", "600011", []string{"c2b_confirmation"}, "https://a2.example.com")
+	epB1 := endpoint.NewEndpoint("test-account-list-B", "daraja", "600012", []string{"stk_push"}, "https://b1.example.com")
+
+	store.Save(epA1)
+	store.Save(epA2)
+	store.Save(epB1)
+	defer pool.Exec(context.Background(), "DELETE FROM endpoints WHERE id = $1", epA1.ID)
+	defer pool.Exec(context.Background(), "DELETE FROM endpoints WHERE id = $1", epA2.ID)
+	defer pool.Exec(context.Background(), "DELETE FROM endpoints WHERE id = $1", epB1.ID)
+
+	results, err := store.ListByAccount("test-account-list-A")
+	if err != nil {
+		t.Fatalf("failed to list endpoints: %v", err)
+	}
+
+	if len(results) != 2 {
+		t.Fatalf("expected 2 endpoints for test-account-list-A, got %d", len(results))
+	}
+
+	for _, r := range results {
+		if r.AccountID != "test-account-list-A" {
+			t.Errorf("expected only test-account-list-A endpoints, got one belonging to %s", r.AccountID)
+		}
 	}
 }
 

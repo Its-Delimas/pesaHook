@@ -28,6 +28,6 @@ CREATE TABLE events(
     raw JSONB
 );
 
-CREATE INDEX idx_events_endpoint_id ON events(endpoint_id)
+CREATE INDEX idx_events_endpoint_id ON events(endpoint_id);
 
 ALTER TABLE endpoints ADD COLUMN account_id TEXT NOT NULL DEFAULT '';
