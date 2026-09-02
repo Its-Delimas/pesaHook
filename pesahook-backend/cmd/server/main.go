@@ -45,6 +45,9 @@ func main() {
 	// bootsrap route - must say open nio someone getas their first API key
 	mux.HandleFunc("POST /accounts", accountHandler.Create)
 
+	deadLetterHandler := httpapi.NewDeadLetterHandler(endpointStore, deadLetterStore)
+	mux.Handle("GET /endpoints/{id}/dead-letters", protect(apiKeyStore, rateLimiter, deadLetterHandler.List))
+
 	// stays unprotected, Daraja calls this directly
 	mux.HandleFunc("POST /ingest/{provider}/{id}", func(w http.ResponseWriter, r *http.Request) {
 		endpointID := r.PathValue("id")
