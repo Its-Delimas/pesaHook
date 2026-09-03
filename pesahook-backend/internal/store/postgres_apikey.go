@@ -24,3 +24,18 @@ func (s *PostgresAPIKeyStore) Save(k apikey.APIKey) error {
 	)
 	return err
 }
+
+func (s *PostgresAPIKeyStore) GetByHash(hash string) (apikey.APIKey, error) {
+	var k apikey.APIKey
+	row := s.pool.QueryRow(context.Background(), `
+		SELECT id, account_id, key_hash, created_at FROM api_keys WHERE key_hash = $1`, hash)
+
+	err := row.Scan(&k.ID, &k.AccountID, &k.KeyHash, &k.CreatedAt)
+	if err != nil {
+		if err.Error() == "no rows in result set" {
+			return apikey.APIKey{}, ErrNotFound
+		}
+		return apikey.APIKey{}, err
+	}
+	return k, nil
+}
