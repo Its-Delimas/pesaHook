@@ -40,3 +40,11 @@ export type DeadLetter = {
 export async function getDeadLettersForEndpoint(endpointId:string): Promise<DeadLetter[]> {
   return pesahookFetch(`/endpoints/${endpointId}/dead-letters`);
 }
+
+export async function getEventById (eventId:string): Promise<(NormalizedEvent & {raw:object}) | null> {
+  try {
+    return await pesahookFetch(`/events/${eventId}`);
+  }catch {
+    return null;
+  }
+}
