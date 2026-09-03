@@ -23,3 +23,18 @@ func (s *PostgresAccountStore) Save(a account.Account) error {
 		a.ID, a.Email, a.CreatedAt)
 	return err
 }
+
+func (s *PostgresAccountStore) GetByID(id string) (account.Account, error) {
+	var a account.Account
+	row := s.pool.QueryRow(context.Background(),
+		`SELECT id,email,created_at FROM accounts WHERE id = $1`, id)
+
+	err := row.Scan(&a.ID, &a.Email, &a.CreatedAt)
+	if err != nil {
+		if err.Error() == "no rows in result set" {
+			return account.Account{}, ErrNotFound
+		}
+		return account.Account{}, err
+	}
+	return a, nil
+}
