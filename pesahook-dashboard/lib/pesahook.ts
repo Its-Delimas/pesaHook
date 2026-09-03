@@ -13,3 +13,30 @@ export type Endpoint = {
 export async function getEndpoints(): Promise<Endpoint[]> {
   return pesahookFetch("/endpoints");
 }
+
+export type NormalizedEvent = {
+  event_id: string;
+  endpoint_id:string;
+  event_type:string;
+  status: "success" | "failed";
+  amount: number;
+  transaction_id: string;
+  phone_number : string;
+  received_at: string;
+}
+
+export async function getEventsForEndpoints(endpointID: string): Promise<NormalizedEvent[]> {
+  return pesahookFetch(`/events?endpoint_id=${endpointID}`);
+}
+
+export type DeadLetter = {
+  event: NormalizedEvent;
+  endpoint_id: string;
+  last_error:string;
+  failed_at:string;
+  attempts:number;
+};
+
+export async function getDeadLettersForEndpoint(endpointId:string): Promise<DeadLetter[]> {
+  return pesahookFetch(`/endpoints/${endpointId}/dead-letters`);
+}
