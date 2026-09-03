@@ -24,7 +24,7 @@ func (s *PostgresAccountStore) Save(a account.Account) error {
 	return err
 }
 
-func (s *PostgresAccountStore) GetByID(id string) (account.Account, error) {
+func (s *PostgresAccountStore) GetById(id string) (account.Account, error) {
 	var a account.Account
 	row := s.pool.QueryRow(context.Background(),
 		`SELECT id,email,created_at FROM accounts WHERE id = $1`, id)

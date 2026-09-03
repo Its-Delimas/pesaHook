@@ -28,8 +28,8 @@ func main() {
 
 	eventHandler := httpapi.NewEventHandler(eventStore, endpointStore, d)
 
-	accountStore := store.NewMemoryAccountStore()
-	apiKeyStore := store.NewMemoryAPIKeyStore()
+	accountStore := store.NewPostgresAccountStore(pool)
+	apiKeyStore := store.NewPostgresAPIKeyStore(pool)
 	accountHandler := httpapi.NewAccountHandler(accountStore, apiKeyStore)
 
 	rateLimiter := httpapi.NewAccountRateLimiter(20, 1)
