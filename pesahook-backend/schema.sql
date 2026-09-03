@@ -1,3 +1,4 @@
+
 CREATE TABLE endpoints (
     id TEXT PRIMARY KEY,
     provider TEXT NOT NULL,
@@ -28,6 +29,19 @@ CREATE TABLE events(
     raw JSONB
 );
 
+CREATE TABLE accounts (
+    id TEXT PRIMARY KEY,
+    email TEXT NOT NULL UNIQUE,
+    created_at TIMESTAMPTZ NOT NULL
+);
+
+CREATE TABLE api_keys (
+    id TEXT PRIMARY KEY,
+    account_id TEXT NOT NULL REFERENCES accounts(id),
+    key_hash TEXT NOT NULL UNIQUE,
+    created_at TIMESTAMPTZ NOT NULL
+);
+
+CREATE INDEX idx_api_keys_key_hash ON api_keys(key_hash);
 CREATE INDEX idx_events_endpoint_id ON events(endpoint_id);
 
-ALTER TABLE endpoints ADD COLUMN account_id TEXT NOT NULL DEFAULT '';
