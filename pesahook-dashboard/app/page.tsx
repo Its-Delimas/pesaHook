@@ -21,6 +21,22 @@ export default async function EndpointsPage(){
             New endpoint
           </button>
         </div>
+
+        <div className="grid grid-cols-3 gap-4 mb-8">
+          <div className="border border-border rounded-xl px-5 py-4">
+              <p className="text-xs text-muted mb-1">Endpoints</p>
+              <p className="text-2xl font-semibold tracking-tight">{endpoints.length}</p>
+          </div>
+          <div className="border border-border rounded-xl px-5 py-4">
+              <p className="text-xs text-muted mb-1">Providers</p>
+              <p className="text-2xl font-semibold tracking-tight">{providerCount}</p>
+          </div>
+                    <div className="border border-border rounded-xl px-5 py-4">
+              <p className="text-xs text-muted mb-1">Event types</p>
+              <p className="text-2xl font-semibold tracking-tight">{totalEventTypes}</p>
+          </div>
+
+        </div>
       </main>
     )
 }
