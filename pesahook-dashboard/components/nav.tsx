@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu, X, Webhook, KeyRound } from "lucide-react";
-import { Logo } from "./logo";
+// import { Logo } from "./logo";
 
 const links = [
   { href: "/", label: "Endpoints", icon: Webhook, match: (p: string) => p === "/" || p.startsWith("/endpoints") },
@@ -20,7 +20,7 @@ export function Nav() {
       <div className="flex items-center justify-between px-6 h-14">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2">
-            <Logo size={26} />
+            {/* <Logo size={26} /> */}
             <span className="text-sm font-semibold tracking-tight">PesaHook</span>
           </Link>
 
