@@ -2,12 +2,13 @@
 
 @theme {
   --color-bg: #FFFFFF;
-  --color-surface: #FAFAFA;
+  --color-surface: #F4F4F5;
   --color-border: #E4E4E7;
   --color-ink: #09090B;
   --color-muted: #71717A;
   --color-accent: #0F9D58;
   --color-accent-soft: #E7F5EC;
+  --color-accent-dark: #0B7A44;
   --color-danger: #DC2626;
   --color-danger-soft: #FEF2F2;
 
@@ -16,6 +17,6 @@
 }
 
 body {
-  background-color: var(--color-bg);
+  background-color: var(--color-surface);
   color: var(--color-ink);
 }
