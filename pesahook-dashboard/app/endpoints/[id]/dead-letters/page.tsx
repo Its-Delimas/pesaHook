@@ -8,7 +8,7 @@ export default async function DeadLettersPage({params}:{params:Promise<{id:strin
     const deadletters = await getDeadLettersForEndpoint(id)
 
     return (
-        <main className="px-8 py-10 w-full">
+        <main className="px-8 py-10 max-w-5xl mx-auto">
             <Link href={`/endpoints/${id}`} className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink transition-colors mb-6">
                 <ArrowLeft size={14}/> Events
             </Link>
@@ -44,7 +44,7 @@ export default async function DeadLettersPage({params}:{params:Promise<{id:strin
                                 </span>
                             </div>
 
-                            <ReplayButton eventID={dl.event.event_id} />
+                            <ReplayButton eventId={dl.event.event_id} />
                         </div>
                     ))}
                 </div>

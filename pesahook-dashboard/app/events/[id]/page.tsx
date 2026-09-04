@@ -10,7 +10,7 @@ export default async function EventDetailPage ({params}:{params:Promise<{id:stri
     if (!event) notFound();
 
     return (
-        <main className="px-8 py-10 w-full">
+        <main className="px-8 py-10 max-w-5xl mx-auto">
             <Link href={`/endpoints/${event.endpoint_id}`} className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink transition-colors mb-6">
                 <ArrowLeft size={14} /> Events
             </Link>

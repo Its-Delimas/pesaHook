@@ -12,7 +12,7 @@ export default async function EndpointEventsPage({
   const events = await getEventsForEndpoints(id);
 
   return (
-    <main className="px-8 py-10 w-full">
+    <main className="px-8 py-10 max-w-5xl mx-auto">
       <Link
         href="/"
         className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink transition-colors mb-6"
