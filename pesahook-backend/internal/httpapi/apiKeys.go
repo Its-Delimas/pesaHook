@@ -64,4 +64,7 @@ func (h *APIKeyHandler) List(w http.ResponseWriter, r *http.Request) {
 	for i, k := range keys {
 		responses[i] = apikeyResponse{ID: k.ID, CreatedAt: k.CreatedAt.Format(time.RFC3339)}
 	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(responses)
 }
