@@ -45,3 +45,23 @@ func (h *APIKeyHandler) Create(w http.ResponseWriter, r *http.Request) {
 	})
 
 }
+
+// GET /api-keys - account's keys, not the raw key or hash
+func (h *APIKeyHandler) List(w http.ResponseWriter, r *http.Request) {
+	accountID, ok := r.Context().Value(accountIDKey).(string)
+	if !ok {
+		http.Error(w, "unauthenticated", http.StatusUnauthorized)
+		return
+	}
+
+	keys, err := h.APIKeys.ListByAccount(accountID)
+	if err != nil {
+		http.Error(w, "failed to list api keys", http.StatusInternalServerError)
+		return
+	}
+
+	responses := make([]apikeyResponse, len(keys))
+	for i, k := range keys {
+		responses[i] = apikeyResponse{ID: k.ID, CreatedAt: k.CreatedAt.Format(time.RFC3339)}
+	}
+}

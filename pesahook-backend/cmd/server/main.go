@@ -53,6 +53,9 @@ func main() {
 		endpointID := r.PathValue("id")
 		ingestHandler.ServeHTTP(w, r, endpointID)
 	})
+	apiKeyhandler := httpapi.NewAPIKeyHandler(apiKeyStore)
+	mux.Handle("POST /api-keys", protect(apiKeyStore, rateLimiter, apiKeyhandler.Create))
+	mux.Handle("GET /api-keys", protect(apiKeyStore, rateLimiter, apiKeyhandler.List))
 
 	log.Println("PesaHook listening on :8080")
 	if err := http.ListenAndServe(":8080", mux); err != nil {

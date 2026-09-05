@@ -32,4 +32,14 @@ func (s *MemoryAPIKeyStore) GetByHash(hash string) (apikey.APIKey, error) {
 	return k, nil
 }
 
-//todo: cureently in store - will switch to real db later
+func (s *MemoryAPIKeyStore) ListByAccount(accountID string) ([]apikey.APIKey, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	results := []apikey.APIKey{}
+	for _, k := range s.data {
+		if k.AccountID == accountID {
+			results = append(results, k)
+		}
+	}
+	return results, nil
+}

@@ -39,3 +39,23 @@ func (s *PostgresAPIKeyStore) GetByHash(hash string) (apikey.APIKey, error) {
 	}
 	return k, nil
 }
+
+func (s *PostgresAPIKeyStore) ListByAccount(accountID string) ([]apikey.APIKey, error) {
+	rows, err := s.pool.Query(context.Background(), `
+		SELECT id, account_id, key_hash, created_at FROM api_keys WHERE account_id = $1 ORDER BY created_at DESC`, accountID)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	results := []apikey.APIKey{}
+	for rows.Next() {
+		var k apikey.APIKey
+		if err := rows.Scan(&k.ID, &k.AccountID, &k.KeyHash, &k.CreatedAt); err != nil {
+			return nil, err
+		}
+		results = append(results, k)
+	}
+	return results, rows.Err()
+}
