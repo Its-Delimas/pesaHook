@@ -48,3 +48,12 @@ export async function getEventById (eventId:string): Promise<(NormalizedEvent & 
     return null;
   }
 }
+
+export type APIKeySummary = {
+  id:string;
+  created_at:string;
+}
+
+export async function getAPIKeys(): Promise<APIKeySummary[]> {
+    return pesahookFetch("/api-keys");
+}
